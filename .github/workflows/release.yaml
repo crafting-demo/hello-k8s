@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    tags:
+    - 'v*'
+
+env:
+  CR_BASE: gcr.io/crafting-playground/demo/hello-k8s
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Collect Information
+      run: |
+        echo "IMAGE_COMMIT_TAG=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+        echo "IMAGE_VERSION=${{github.ref_name}}" >> $GITHUB_ENV
+        echo "IMAGE_VERSION_TAG=${IMAGE_VERSION#v}" >> $GITHUB_ENV
+    - name: Identity Federation
+      uses: google-github-actions/auth@v0.4.0
+      with:
+        workload_identity_provider: ${{ secrets.GCP_OIDC_PROVIDER_ID }}
+        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0.3.0
+    - name: Configure docker
+      run: gcloud auth configure-docker
+    - name: Push tagged images
+      run: |
+        docker pull $CR_BASE/frontend:$IMAGE_COMMIT_TAG
+        docker pull $CR_BASE/backend:$IMAGE_COMMIT_TAG
+        docker tag $CR_BASE/frontend:$IMAGE_COMMIT_TAG $CR_BASE/frontend:$IMAGE_VERSION_TAG
+        docker tag $CR_BASE/backend:$IMAGE_COMMIT_TAG $CR_BASE/backend:$IMAGE_VERSION_TAG
+        docker push $CR_BASE/frontend:$IMAGE_VERSION_TAG
+        docker push $CR_BASE/backend:$IMAGE_VERSION_TAG
+    - name: Release
+      run: |
+        sed -i -r "s/^(\\s+image:[^:]+:)latest\$/\\1$IMAGE_VERSION_TAG/g" deploy/kubernetes.yaml
+        hub release create -a deploy/kubernetes.yaml -m "$IMAGE_VERSION" "$IMAGE_VERSION"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
