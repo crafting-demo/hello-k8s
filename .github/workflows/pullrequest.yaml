@@ -21,19 +21,13 @@ jobs:
     - id: auth
       uses: google-github-actions/auth@v0.4.0
       with:
-        token_format: "access_token"
-        create_credentials_file: true
-        activate_credentials_file: true
         workload_identity_provider: ${{ secrets.GCP_OIDC_PROVIDER_ID }}
         service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-        access_token_lifetime: '100s'
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v0.3.0
     - name: Configure docker
-      run: |
-        gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
-        gcloud auth configure-docker
+      run: gcloud auth configure-docker
     - name: Push frontend
-      run: docker push gcr.io/crafting-playground/demo/hello-k8s/frontend:pr-$(jq -cMr .pull_request.number "$GITHUB_EVENT_PATH")
+      run: 'docker push gcr.io/crafting-playground/demo/hello-k8s/frontend:pr-$(jq -cMr .pull_request.number "$GITHUB_EVENT_PATH")'
     - name: Push backend
-      run: docker push gcr.io/crafting-playground/demo/hello-k8s/backend:pr-$(jq -cMr .pull_request.number "$GITHUB_EVENT_PATH")
+      run: 'docker push gcr.io/crafting-playground/demo/hello-k8s/backend:pr-$(jq -cMr .pull_request.number "$GITHUB_EVENT_PATH")'
