@@ -1,0 +1,45 @@
+name: Push
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  CR_BASE: gcr.io/crafting-playground/demo/hello-k8s
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Collect Information
+      run: |
+        echo "IMAGE_TAG=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+    - name: Build frontend
+      run: |
+        docker build frontend -t $CR_BASE/frontend:$IMAGE_TAG
+        docker tag $CR_BASE/frontend:$IMAGE_TAG $CR_BASE/frontend:latest
+    - name: Build backend
+      run: |
+        docker build backend -t $CR_BASE/backend:$IMAGE_TAG
+        docker tag $CR_BASE/backend:$IMAGE_TAG $CR_BASE/backend:latest
+    - name: Identity Federation
+      uses: google-github-actions/auth@v0.4.0
+      with:
+        workload_identity_provider: ${{ secrets.GCP_OIDC_PROVIDER_ID }}
+        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0.3.0
+    - name: Configure docker
+      run: gcloud auth configure-docker
+    - name: Push images
+      run: |
+        docker push $CR_BASE/frontend:$IMAGE_TAG
+        docker push $CR_BASE/backend:$IMAGE_TAG
+        docker push $CR_BASE/frontend:latest
+        docker push $CR_BASE/backend:latest
