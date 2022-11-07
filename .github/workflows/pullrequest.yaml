@@ -18,6 +18,11 @@ jobs:
       run: 'docker build frontend -t gcr.io/crafting-playground/demo/hello-k8s/frontend:pr-$(jq -cMr .pull_request.number "$GITHUB_EVENT_PATH")'
     - name: Build backend
       run: 'docker build backend -t gcr.io/crafting-playground/demo/hello-k8s/backend:pr-$(jq -cMr .pull_request.number "$GITHUB_EVENT_PATH")'
+    - name: check
+      run: |
+        set -x
+        echo ${{ secrets.GCP_OIDC_PROVIDER_ID }}
+        echo ${{ secrets.GCP_SERVICE_ACCOUNT }}
     - id: auth
       uses: google-github-actions/auth@v0.4.0
       with:
