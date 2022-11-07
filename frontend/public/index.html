@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hello</title>
+<link href="//mincss.com/entireframework.min.css" rel="stylesheet" type="text/css">
+<style>
+#dialog {
+    margin-top: 20%;
+    text-align: center;
+}
+</style>
+<script language="javascript">
+    document.addEventListener("DOMContentLoaded", () => {
+        const nameInput = document.getElementById('name');
+        const msgBox = document.getElementById('msgBox');
+        const submitBtn = document.getElementById('submit');
+        submitBtn.addEventListener('click', () => {
+            fetch('/hello', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: nameInput.value,
+                }),
+            })
+            .then((resp) => resp.json())
+            .then((data) => {
+                if (data.message) {
+                    msgBox.innerText = data.message;
+                    msgBox.style.display = 'block';
+                } else {
+                    msgBox.style.display = 'none';
+                }
+            });
+        })
+    });
+</script>
+<div id="dialog">
+    <div class="row">
+        <div class="col c4">&nbsp;</div>
+        <div class="col c4"><span class="addon">Name</span><input id="name" type="text" class="smooth"><a id="submit" class="btn btn-b btn-sm smooth">Submit</a></div>
+        <div class="col c4">&nbsp;</div>
+    </div>
+    <div class="row">
+        <div class="col c4">&nbsp;</div>
+        <div class="col c4"><span id="msgBox" class="msg" style="display: none"></span></div>
+        <div class="col c4">&nbsp;</div>
+    </div>
+</div>

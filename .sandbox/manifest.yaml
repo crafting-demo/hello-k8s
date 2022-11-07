@@ -1,0 +1,15 @@
+hooks:
+  build:
+    cmd: npm install
+    dir: frontend
+
+daemons:
+  frontend:
+    run:
+      cmd: npm start
+      dir: frontend
+  
+  backend:
+    run:
+      cmd: go run ./
+      dir: backend

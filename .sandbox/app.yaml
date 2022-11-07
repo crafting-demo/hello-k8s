@@ -1,0 +1,27 @@
+---
+endpoints:
+  - name: app
+    http:
+      routes:
+        - backend:
+            target: app
+            port: frontend
+          path_prefix: /
+workspaces:
+  - name: app
+    ports:
+      - name: frontend
+        port: 3000
+        protocol: HTTP/TCP
+      - name: backend
+        port: 8000
+        protocol: HTTP/TCP
+    checkouts:
+      - path: src
+        repo:
+          git: git@github.com:crafting-demo/hello-k8s
+    packages:
+      - name: golang
+        version: ~1
+      - name: nodejs
+        version: ~16
