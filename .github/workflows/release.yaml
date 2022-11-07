@@ -35,6 +35,7 @@ jobs:
       run: gcloud auth configure-docker
     - name: Push tagged images
       run: |
+        set -x
         docker pull $CR_BASE/frontend:$IMAGE_COMMIT_TAG
         docker pull $CR_BASE/backend:$IMAGE_COMMIT_TAG
         docker tag $CR_BASE/frontend:$IMAGE_COMMIT_TAG $CR_BASE/frontend:$IMAGE_VERSION_TAG
