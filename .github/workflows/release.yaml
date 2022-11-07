@@ -23,6 +23,7 @@ jobs:
         echo "IMAGE_COMMIT_TAG=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
         echo "IMAGE_VERSION=${{github.ref_name}}" >> $GITHUB_ENV
         echo "IMAGE_VERSION_TAG=${IMAGE_VERSION#v}" >> $GITHUB_ENV
+      shell: bash
     - name: Identity Federation
       uses: google-github-actions/auth@v0.4.0
       with:
