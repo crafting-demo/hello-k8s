@@ -12,4 +12,3 @@ cat <<EOF
     "namespace": "$APP_NS"
 }
 EOF
-Footer
