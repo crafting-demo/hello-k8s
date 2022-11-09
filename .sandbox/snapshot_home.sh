@@ -28,11 +28,11 @@ EOF
 mkdir -p ~/.sandbox
 cat <<EOF >~/.sandbox/setup
 #!/bin/bash
-[[ -f "~/.kube/config" ]] || {
+[[ -f "~/.kube/config" || -z "\$KUBECONFIG_SECRET" ]] || {
   mkdir -p ~/.kube
-  cp -f /run/sandbox/fs/secrets/shared/shared/kubeconfig-demo1.yaml ~/.kube/config
+  cp -f "/run/sandbox/fs/secrets/shared/\$KUBECONFIG_SECRET" ~/.kube/config
   chmod +w ~/.kube/config
-  kubectl config set contexts.demo1.namespace \$APP_NS
+  kubectl config set contexts.default.namespace \$APP_NS
 }
 EOF
 chmod a+rx ~/.sandbox/setup
