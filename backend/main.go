@@ -15,6 +15,7 @@ import (
 
 var (
 	listenAddr = flag.String("l", ":8000", "Listening address.")
+	myName     = flag.String("n", "", "Name of the service.")
 )
 
 type HelloRequest struct {
@@ -28,6 +29,10 @@ type HelloResponse struct {
 func main() {
 	flag.Parse()
 
+	var msg string
+	if *myName != "" {
+		msg = " This is " + *myName + "."
+	}
 	server := http.Server{
 		Addr: *listenAddr,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +42,7 @@ func main() {
 				return
 			}
 			resp := &HelloResponse{
-				Message: fmt.Sprintf("Hello %s!", req.Name),
+				Message: fmt.Sprintf("Hello %s!%s", req.Name, msg),
 			}
 			data, err := json.Marshal(resp)
 			if err != nil {

@@ -1,0 +1,91 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Push frontend image",
+            "type": "shell",
+            "command": "./deploy/push-dev-image.sh frontend",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Push backend image",
+            "type": "shell",
+            "command": "./deploy/push-dev-image.sh backend",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Push All images",
+            "dependsOn": ["Push frontend image", "Push backend image"],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Deploy dev",
+            "type": "shell",
+            "command": "./deploy/deploy-dev.sh",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Pod restart frontend",
+            "type": "shell",
+            "command": "kubectl -n $APP_NS delete po -lapp=frontend",
+            "presentation": {
+                "echo": true,
+                "reveal": "always"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Pod restart backend",
+            "type": "shell",
+            "command": "kubectl -n $APP_NS delete po -lapp=backend",
+            "presentation": {
+                "echo": true,
+                "reveal": "always"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Push and Deploy",
+            "dependsOn": ["Push All images", "Deploy dev"],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Push deploy and restart",
+            "type": "shell",
+            "command": "kubectl -n $APP_NS delete po -lapp",
+            "presentation": {
+                "echo": true,
+                "reveal": "always"
+            },
+            "dependsOn": ["Push and Deploy"],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+    ]
+}

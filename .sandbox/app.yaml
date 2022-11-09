@@ -1,11 +1,18 @@
 ---
 endpoints:
-  - name: app
+  - name: dev
     http:
       routes:
         - backend:
             target: app
             port: frontend
+          path_prefix: /
+  - name: k8s
+    http:
+      routes:
+        - backend:
+            target: app
+            port: lb
           path_prefix: /
 workspaces:
   - name: app
@@ -16,6 +23,9 @@ workspaces:
       - name: backend
         port: 8000
         protocol: HTTP/TCP
+      - name: lb
+        port: 3800
+        protocol: HTTP/TCP
     checkouts:
       - path: src
         repo:
@@ -25,3 +35,13 @@ workspaces:
         version: ~1
       - name: nodejs
         version: ~16
+    env:
+    - GOOGLE_APPLICATION_CREDENTIALS=/run/sandbox/fs/secrets/shared/shared/gcp-account.json
+    - CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE=$GOOGLE_APPLICATION_CREDENTIALS
+    - APP_NS=${SANDBOX_APP}-${SANDBOX_NAME}-${SANDBOX_ID}
+    probes:
+      readiness:
+      - name: lb
+        http_get:
+          port: 3800
+          path: /
