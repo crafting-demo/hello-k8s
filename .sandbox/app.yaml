@@ -29,15 +29,18 @@ workspaces:
     checkouts:
       - path: src
         repo:
-          git: git@github.com:crafting-demo/hello-k8s
+          git: https://github.com/crafting-demo/hello-k8s
     packages:
       - name: golang
         version: ~1
       - name: nodejs
         version: ~16
+    base_snapshot: base-k8s-r1
+    home_snapshot: home-k8s-r1
     env:
-    - GOOGLE_APPLICATION_CREDENTIALS=/run/sandbox/fs/secrets/shared/shared/gcp-account.json
+    - GOOGLE_APPLICATION_CREDENTIALS=/run/sandbox/fs/secrets/shared/gcp-account.json
     - CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE=$GOOGLE_APPLICATION_CREDENTIALS
+    - KUBECONFIG_SECRET=kubeconfig.yaml
     - APP_NS=${SANDBOX_APP}-${SANDBOX_NAME}-${SANDBOX_ID}
     probes:
       readiness:
@@ -45,3 +48,38 @@ workspaces:
         http_get:
           port: 3800
           path: /
+resources:
+  - name: kubernetes
+    brief: The deployment in the Kubernetes cluster
+    details: |
+      The deployment is in namespace `{{data.namespace}}`.
+    handlers:
+      on_create:
+        max_retries: 3
+        save_state: true
+        use_workspace:
+          name: app
+          run:
+            cmd: .sandbox/deploy.sh
+            dir: src
+      on_delete:
+        max_retries: 3
+        use_workspace:
+          name: app
+          run:
+            cmd: .sandbox/undeploy.sh
+            dir: src
+      on_suspend:
+        max_retries: 1
+        use_workspace:
+          name: app
+          run:
+            cmd: .sandbox/scale.sh 0
+            dir: src
+      on_resume:
+        max_retries: 3
+        use_workspace:
+          name: app
+          run:
+            cmd: .sandbox/scale.sh 1
+            dir: src
