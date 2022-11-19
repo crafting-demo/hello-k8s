@@ -19,6 +19,9 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'baggage': "key=value",
+                    'traceparent': "00-324cfcc3f5ec99819396b2a8ae456390-54c8a63507562a2b-01", // this must exist in order for tracestate to be propagated.
+                    'tracestate': "key=value"
                 },
                 body: JSON.stringify({
                     name: nameInput.value,
