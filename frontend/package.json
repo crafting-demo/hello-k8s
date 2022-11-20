@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "start-ot": "node -r './ot-tracing.js' app.js",
+    "start-otel": "node -r './ot-tracing.js' app.js", 
     "start-dev": "nodemon --inspect app.js"
   },
   "dependencies": {
