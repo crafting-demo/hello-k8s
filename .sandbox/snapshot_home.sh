@@ -69,7 +69,7 @@ if [[ -d '/usr/local/google-cloud-sdk' ]]; then
     . '/usr/local/google-cloud-sdk/path.bash.inc'
     . '/usr/local/google-cloud-sdk/completion.bash.inc'
 fi
-export PATH="$HOME/go/bin:$PATH"
+export PATH="\$HOME/go/bin:\$PATH"
 eval "\$(direnv hook bash)"
 # END-WORKSPACE-ENV
 EOF

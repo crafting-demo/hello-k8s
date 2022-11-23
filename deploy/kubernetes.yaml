@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: gcr.io/crafting-playground/demo/hello-k8s/frontend:latest
+        image: us-docker.pkg.dev/crafting-playground/demo/hello-k8s/frontend:latest
         imagePullPolicy: Always
         env:
         - name: BACKEND_URL
@@ -47,7 +47,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: gcr.io/crafting-playground/demo/hello-k8s/backend:latest
+        image: us-docker.pkg.dev/crafting-playground/demo/hello-k8s/backend:latest
         imagePullPolicy: Always
 ---
 apiVersion: v1

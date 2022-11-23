@@ -6,7 +6,7 @@ on:
     - 'v*'
 
 env:
-  CR_BASE: gcr.io/crafting-playground/demo/hello-k8s
+  CR_BASE: us-docker.pkg.dev/crafting-playground/demo/hello-k8s
 
 jobs:
   build:
@@ -34,7 +34,7 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v0.3.0
     - name: Configure docker
-      run: gcloud auth configure-docker
+      run: gcloud auth configure-docker us-docker.pkg.dev
     - name: Push tagged images
       run: |
         set -x
