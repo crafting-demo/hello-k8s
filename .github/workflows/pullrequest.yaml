@@ -31,11 +31,10 @@ jobs:
       with:
         workload_identity_provider: ${{ secrets.GCP_OIDC_PROVIDER_ID }}
         service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-        access_token_scopes: storage-rw
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v0.3.0
     - name: Configure docker
-      run: gcloud auth configure-docker
+      run: gcloud auth configure-docker us-docker.pkg.dev
     - name: Push images
       run: |
         docker push $CR_BASE/frontend:$IMAGE_TAG
