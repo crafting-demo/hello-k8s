@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 env:
-  CR_BASE: gcr.io/crafting-playground/demo/hello-k8s
+  CR_BASE: us-docker.pkg.dev/crafting-playground/demo/hello-k8s
 
 jobs:
   build:
