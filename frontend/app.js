@@ -1,3 +1,5 @@
+require("./ot-tracing.js")
+
 const { request } = require("http");
 const express = require("express");
 
@@ -16,7 +18,6 @@ app.post("/hello", (req, res) => {
       headers: {
         "Content-type": "application/json",
         "Content-length": Buffer.byteLength(payload),
-        ...req.headers,
       },
     },
     (resp) => {

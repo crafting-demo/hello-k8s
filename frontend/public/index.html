@@ -14,14 +14,18 @@
         const nameInput = document.getElementById('name');
         const msgBox = document.getElementById('msgBox');
         const submitBtn = document.getElementById('submit');
+        const genRanHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
         submitBtn.addEventListener('click', () => {
+            const traceId = genRanHex(32);
+            const spanId = genRanHex(16);
+
             fetch('/hello', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'baggage': "key=value",
-                    'traceparent': "00-324cfcc3f5ec99819396b2a8ae456390-54c8a63507562a2b-01", // this must exist in order for tracestate to be propagated.
-                    'tracestate': "key=value"
+                    'baggage': ["span-id", spanId].join("="),
+                    'traceparent': ["00", traceId, spanId, "01"].join("-"), // this must exist in order for tracestate to be propagated.
+                    'tracestate': ["span-id", spanId].join("="),
                 },
                 body: JSON.stringify({
                     name: nameInput.value,
