@@ -36,6 +36,7 @@ func main() {
 	server := http.Server{
 		Addr: *listenAddr,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			fmt.Printf("headers are %v\n", r.Header)
 			req := &HelloRequest{}
 			if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)

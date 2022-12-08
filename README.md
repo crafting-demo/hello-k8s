@@ -48,6 +48,11 @@ BACKEND_URL=https://backend.${APP_NS}:8000
 
 Restart the process and intercept the `frontend` deployment.
 
+
+By default, there is no header propagation for the frontend app (`npm run start`). You can enable propagaton by running the below commands:
+
+- `npm run start-otel`:  propagation via `baggage` and/or `W3C trace context` (OpenTelemetry). You can modify the `ot-tracing.js` to enable other propagators if needed. e.g. `B3` , `Jaeger` etc.
+
 #### Backend
 
 The backend development can be done inside the sandbox with `dev` endpoint which
