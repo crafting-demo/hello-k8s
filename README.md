@@ -59,3 +59,11 @@ The backend development can be done inside the sandbox with `dev` endpoint which
 talks to the local frontend process.
 To work with the frontend in the cluster, intercept the `backend` deployment on
 port `8000`.
+
+### Intercept Kubernetes
+
+The example for intercepting backend with an Ingress Endpoint (not affecting regular ingress):
+
+```sh
+cs infra k8s intercept start -n $APP_NS -R deploy/$APP_NS/backend:app:8000:8000 --ingress svc/$APP_NS/frontend
+```
