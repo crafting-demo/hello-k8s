@@ -20,6 +20,13 @@ jobs:
     - name: Collect Information
       run: |
         echo "IMAGE_TAG=pr-$(jq -cMr .pull_request.number "$GITHUB_EVENT_PATH")" >> $GITHUB_ENV
+        if .github/workflows/changes.sh -F .sandbox/workspace/; then
+          echo "WORKSPACE_IMAGE_CHANGED=y" >> $GITHUB_ENV
+        fi
+    - name: Build workspace image
+      if: ${{ env.WORKSPACE_IMAGE_CHANGED != '' }}
+      run: |
+        docker build .sandbox/workspace -t $CR_BASE/workspace:$IMAGE_TAG
     - name: Build frontend
       run: |
         docker build frontend -t $CR_BASE/frontend:$IMAGE_TAG
@@ -35,6 +42,10 @@ jobs:
       uses: google-github-actions/setup-gcloud@v0.3.0
     - name: Configure docker
       run: gcloud auth configure-docker us-docker.pkg.dev
+    - name: Push workspace image
+      if: ${{ env.WORKSPACE_IMAGE_CHANGED != '' }}
+      run: |
+        docker push $CR_BASE/workspace:$IMAGE_TAG
     - name: Push images
       run: |
         docker push $CR_BASE/frontend:$IMAGE_TAG
