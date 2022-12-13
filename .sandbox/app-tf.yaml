@@ -32,11 +32,10 @@ workspaces:
           git: https://github.com/crafting-demo/hello-k8s
     packages:
       - name: golang
-        version: ~1
+        version: ~1.19
       - name: nodejs
         version: ~16
-    base_snapshot: base-k8s-r1
-    home_snapshot: home-k8s-r1
+    base_snapshot: oci://us-docker.pkg.dev/crafting-playground/demo/hello-k8s/workspace:latest
     env:
     - GOOGLE_APPLICATION_CREDENTIALS=/run/sandbox/fs/secrets/shared/gcp-account.json
     - CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE=$GOOGLE_APPLICATION_CREDENTIALS

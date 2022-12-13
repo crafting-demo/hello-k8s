@@ -32,11 +32,10 @@ workspaces:
           git: https://github.com/crafting-demo/hello-k8s
     packages:
       - name: golang
-        version: ~1
+        version: ~1.19
       - name: nodejs
         version: ~16
-    base_snapshot: base-k8s-r1
-    home_snapshot: home-k8s-r1
+    base_snapshot: oci://us-docker.pkg.dev/crafting-playground/demo/hello-k8s/workspace:latest
     env:
     - GOOGLE_APPLICATION_CREDENTIALS=/run/sandbox/fs/secrets/shared/gcp-account.json
     - CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE=$GOOGLE_APPLICATION_CREDENTIALS
@@ -55,31 +54,32 @@ resources:
       The deployment is in namespace `{{data.namespace}}`.
     handlers:
       on_create:
-        max_retries: 3
         save_state: true
         use_workspace:
           name: app
           run:
-            cmd: .sandbox/deploy.sh
+            cmd: |
+              # Create the namespace if not exists.
+              kubectl create ns "$APP_NS" >&2 || true
+              kubectl -n "$APP_NS" apply -f deploy/kubernetes.yaml >&2
+              echo '{"namespace": "'"$APP_NS"'"}'
             dir: src
       on_delete:
-        max_retries: 3
         use_workspace:
           name: app
           run:
-            cmd: .sandbox/undeploy.sh
+            cmd: kubectl delete ns "$APP_NS"
             dir: src
       on_suspend:
         max_retries: 1
         use_workspace:
           name: app
           run:
-            cmd: .sandbox/scale.sh 0
+            cmd: kubectl -n "$APP_NS" scale --replicas=0 --all deploy
             dir: src
       on_resume:
-        max_retries: 3
         use_workspace:
           name: app
           run:
-            cmd: .sandbox/scale.sh 1
+            cmd: kubectl -n "$APP_NS" scale --replicas=1 --all deploy
             dir: src

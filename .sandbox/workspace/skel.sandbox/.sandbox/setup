@@ -1,0 +1,8 @@
+#!/bin/bash
+
+[[ -f "~/.kube/config" || -z "$KUBECONFIG_SECRET" ]] || {
+  mkdir -p ~/.kube
+  cp -f "/run/sandbox/fs/secrets/shared/$KUBECONFIG_SECRET" ~/.kube/config
+  chmod +w ~/.kube/config
+  [[ -z "$APP_NS" ]] || kubectl config set contexts.default.namespace $APP_NS
+}
