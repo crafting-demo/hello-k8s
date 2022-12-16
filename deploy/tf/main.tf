@@ -106,19 +106,20 @@ resource "kubernetes_service" "backend" {
   }
 }
 
-resource "kubernetes_service" "frontend_lb" {
-  metadata {
-    name      = "frontend-lb"
-    namespace = kubernetes_namespace.app.metadata.0.name
-  }
-  spec {
-    selector = {
-      app = "frontend"
-    }
-    port {
-      port        = 80
-      target_port = 3000
-    }
-    type = "LoadBalancer"
-  }
-}
+# Use kubectl port-forward, no longer need load balancer.
+# resource "kubernetes_service" "frontend_lb" {
+#   metadata {
+#     name      = "frontend-lb"
+#     namespace = kubernetes_namespace.app.metadata.0.name
+#   }
+#   spec {
+#     selector = {
+#       app = "frontend"
+#     }
+#     port {
+#       port        = 80
+#       target_port = 3000
+#     }
+#     type = "LoadBalancer"
+#   }
+# }

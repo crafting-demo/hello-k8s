@@ -13,6 +13,9 @@ daemons:
       dir: backend
       env:
       - 'PATH=$HOME/go/bin:$PATH'
-  lb:
+  forward:
     run:
-      cmd: .sandbox/lb_forward.sh
+      cmd: |
+        while true; do
+          kubectl -n $APP_NS port-forward --address 0.0.0.0 deploy/frontend 3800:3000
+        done

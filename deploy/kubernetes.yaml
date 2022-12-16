@@ -61,17 +61,18 @@ spec:
   - name: http
     port: 8000
     protocol: TCP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend-lb
-spec:
-  type: LoadBalancer
-  selector:
-    app: frontend
-  ports:
-  - name: http
-    port: 80
-    targetPort: 3000
-    protocol: TCP
+# Use kubectl port-forward, no longer need load balancer.
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: frontend-lb
+# spec:
+#   type: LoadBalancer
+#   selector:
+#     app: frontend
+#   ports:
+#   - name: http
+#     port: 80
+#     targetPort: 3000
+#     protocol: TCP
